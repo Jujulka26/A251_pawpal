@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:pawpal/config.dart';
+import 'package:pawpal/myconfig.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -234,7 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
     await http
         .post(
-          Uri.parse('${Config.baseUrl}/pawpal/php/register_user.php'),
+          Uri.parse('${MyConfig.baseUrl}/pawpal/api/register_user.php'),
           body: {
             'name': name,
             'email': email,

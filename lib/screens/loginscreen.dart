@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:pawpal/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:pawpal/config.dart';
+import 'package:pawpal/myconfig.dart';
 import 'registerscreen.dart';
-import 'homescreen.dart';
+import 'mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -207,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     http
         .post(
-          Uri.parse('${Config.baseUrl}/pawpal/php/login_user.php'),
+          Uri.parse('${MyConfig.baseUrl}/pawpal/api/login_user.php'),
           body: {'email': email, 'password': password},
         )
         .then((response) {
@@ -225,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
               );
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+                MaterialPageRoute(builder: (context) => MainScreen(user: user)),
               );
             } else {
               if (!mounted) return;
