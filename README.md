@@ -75,7 +75,7 @@
       "pet_type": "Cat",
       "category": "Help/Rescue",
       "description": "A green cat",
-      "image_paths": "uploads/pet_1_693356a8698f3_0.jpg,uploads/pet_1_693356a869919_1.jpg,uploads/    pet_1_693356a869929_2.jpg",
+      "image_paths": "uploads/pet_1_693356a8698f3_0.jpg,uploads/pet_1_693356a869919_1.jpg,uploads/pet_1_693356a869929_2.jpg",
       "lat": "37.4219983",
       "lng": "-122.084",
       "created_at": "2025-12-06 06:03:20",
