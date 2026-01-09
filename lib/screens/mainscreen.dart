@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pawpal/screens/submitpetscreen.dart';
@@ -7,6 +6,7 @@ import '../models/user.dart';
 import 'loginscreen.dart';
 import '../models/pet.dart';
 import '../myconfig.dart';
+import '../shared/mydrawer.dart';
 
 class MainScreen extends StatefulWidget {
   final User? user;
@@ -55,12 +55,6 @@ class _MainScreenState extends State<MainScreen> {
             },
             icon: Icon(Icons.refresh),
           ),
-          IconButton(
-            onPressed: () {
-              showLogoutDialog();
-            },
-            icon: Icon(Icons.logout),
-          ),
         ],
       ),
       body: Center(
@@ -107,11 +101,8 @@ class _MainScreenState extends State<MainScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
                                     child: Container(
-                                      width:
-                                          screenWidth * 0.28, // more responsive
-                                      height:
-                                          screenWidth *
-                                          0.22, // balanced aspect ratio
+                                      width: screenWidth * 0.28,
+                                      height: screenWidth * 0.22,
                                       color: Colors.grey[400],
                                       child: Image.network(
                                         '${MyConfig.baseUrl}/pawpal/api/${petList[index].imagePaths.toString().split(",")[0]}',
@@ -262,20 +253,12 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
+      //=========================================================FAB
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // button action
           if (widget.user?.userId == '0') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Please login first/or register first"),
-                backgroundColor: Colors.red,
-              ),
-            );
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-            );
+            showLoginRequiredDialog();
           } else {
             await Navigator.push(
               context,
@@ -288,16 +271,17 @@ class _MainScreenState extends State<MainScreen> {
         },
         child: Icon(Icons.add),
       ),
+      drawer: MyDrawer(user: widget.user),
     );
   }
 
-  void showLogoutDialog() {
+  void showLoginRequiredDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Logout'),
-          content: Text('Are you sure you want to logout?'),
+          title: Text('Login Required'),
+          content: Text('You need to be logged in to perform this action.'),
           actions: [
             TextButton(
               child: Text('Cancel'),
@@ -306,7 +290,7 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             TextButton(
-              child: Text('Logout'),
+              child: Text('Login'),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
@@ -371,7 +355,6 @@ class _MainScreenState extends State<MainScreen> {
         )
         .then((response) {
           if (response.statusCode == 200) {
-            log("Load Pets Log: ${response.body}");
             var jsonResponse = jsonDecode(response.body);
             if (jsonResponse['success'] == true &&
                 jsonResponse['data'] != null &&

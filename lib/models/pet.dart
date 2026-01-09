@@ -1,8 +1,12 @@
 class Pet {
   String? petId;
   String? userId;
+  String? name;
   String? petName;
   String? petType;
+  String? petGender;
+  String? petAge;
+  String? petHealth;
   String? category;
   String? description;
   String? imagePaths;
@@ -13,8 +17,12 @@ class Pet {
   Pet({
     this.petId,
     this.userId,
+    this.name,
     this.petName,
     this.petType,
+    this.petGender,
+    this.petAge,
+    this.petHealth,
     this.category,
     this.description,
     this.imagePaths,
@@ -26,8 +34,12 @@ class Pet {
   Pet.fromJson(Map<String, dynamic> json) {
     petId = json['pet_id'];
     userId = json['user_id'];
+    name = json['name'];
     petName = json['pet_name'];
     petType = json['pet_type'];
+    petGender = json['pet_gender'];
+    petAge = json['pet_age'];
+    petHealth = json['pet_health'];
     category = json['category'];
     description = json['description'];
     imagePaths = json['image_paths'];
@@ -40,8 +52,12 @@ class Pet {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['pet_id'] = petId;
     data['user_id'] = userId;
+    data['name'] = name;
     data['pet_name'] = petName;
     data['pet_type'] = petType;
+    data['pet_gender'] = petGender;
+    data['pet_age'] = petAge;
+    data['pet_health'] = petHealth;
     data['category'] = category;
     data['description'] = description;
     data['image_paths'] = imagePaths;

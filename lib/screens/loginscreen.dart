@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:pawpal/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +17,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  late double height, width;
+  late double screenHeight, screenWidth;
   bool visible = true;
   bool isChecked = false;
   late User user;
@@ -30,22 +29,29 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    height = MediaQuery.of(context).size.height;
-    width = MediaQuery.of(context).size.width;
-    if (width > 500) {
-      width = 500;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 600) {
+      screenWidth = 600;
     } else {
-      width = width;
+      screenWidth = screenWidth;
     }
     return Scaffold(
-      appBar: AppBar(title: Text('Login Page')),
+      appBar: AppBar(title: Text('Login'), centerTitle: true),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
             child: SizedBox(
-              width: width,
+              width: screenWidth,
               child: Column(
                 children: [
                   SizedBox(
@@ -53,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 175,
                     child: Image.asset('assets/images/pawpal.png'),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -62,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   TextField(
                     controller: passwordController,
                     obscureText: visible,
@@ -84,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Row(
                     children: [
                       Text('Remember Me'),
@@ -136,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: loginUser,
                     style: ElevatedButton.styleFrom(
@@ -145,9 +151,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Text('Login'),
                   ),
-                  SizedBox(height: 15),
-                  GestureDetector(
-                    onTap: () {
+                  const SizedBox(height: 15),
+                  TextButton(
+                    onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -156,6 +162,28 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     },
                     child: Text('Dont have an account? Register here.'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      User user = User(
+                        userId: '0',
+                        name: 'Guest',
+                        email: 'guest@email.com',
+                        password: 'guest',
+                        phone: '0123456789',
+                        regDate: '0000-00-00',
+                      );
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MainScreen(user: user),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Continue as Guest',
+                      style: TextStyle(color: Colors.indigoAccent),
+                    ),
                   ),
                 ],
               ),
@@ -193,6 +221,14 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  void saveUserSession() async {
+    if (user.userId == '0') {
+      return;
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userId', user.userId ?? '');
+  }
+
   void loginUser() {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
@@ -212,10 +248,10 @@ class _LoginScreenState extends State<LoginScreen> {
         )
         .then((response) {
           if (response.statusCode == 200) {
-            log("Login Log: ${response.body}");
             var resarray = jsonDecode(response.body);
-            if (resarray['status'] == 'success') {
+            if (resarray['success'] == true) {
               user = User.fromJson(resarray['data'][0]);
+              saveUserSession();
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

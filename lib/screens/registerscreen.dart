@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pawpal/myconfig.dart';
@@ -17,27 +16,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  late double height, width;
+  late double screenHeight, screenWidth;
   bool visible = true, visibleConfirm = true;
   bool isLoading = false;
 
+  @override void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    height = MediaQuery.of(context).size.height;
-    width = MediaQuery.of(context).size.width;
-    if (width > 500) {
-      width = 500;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 600) {
+      screenWidth = 600;
     } else {
-      width = width;
+      screenWidth = screenWidth;
     }
     return Scaffold(
-      appBar: AppBar(title: Text('Register Page')),
+      appBar: AppBar(
+        title: Text(
+          'Create Account',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.deepOrange,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
             child: SizedBox(
-              width: width,
+              width: screenWidth,
               child: Column(
                 children: [
                   SizedBox(
@@ -216,7 +232,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String name,
     String phone,
   ) async {
-    isLoading = true;
+    setState(() {
+      isLoading = true;
+    });
     showDialog(
       context: context,
       builder: (context) {
@@ -244,9 +262,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         )
         .then((response) {
           if (response.statusCode == 200) {
-            log("Register Log: ${response.body}");
             var resarray = jsonDecode(response.body);
-            if (resarray['status'] == 'success') {
+            if (resarray['success'] == true) {
               if (!mounted) return;
               if (isLoading) {
                 Navigator.pop(context); // Close the progress dialog

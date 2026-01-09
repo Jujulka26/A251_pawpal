@@ -23,7 +23,7 @@
 	$sqlcheckmail = "SELECT * FROM `tbl_users` WHERE `email` = '$email'";
     $result = $conn->query($sqlcheckmail);
 	if ($result->num_rows > 0){
-		$response = array('status' => 'failed', 'message' => 'Email already registered');
+		$response = array('success' => false, 'message' => 'Email already registered');
 		sendJsonResponse($response);
 		exit();
 	}
@@ -32,14 +32,15 @@
 	$sqlregister = "INSERT INTO `tbl_users`(`name`, `email`, `phone`, `password`) VALUES ('$name','$email','$phone','$hashedpassword')";
 	try{
 		if ($conn->query($sqlregister) === TRUE){
-			$response = array('status' => 'success', 'message' => 'User registered successfully');
+			$response = array('success' => true, 'message' => 'User registered successfully');
 			sendJsonResponse($response);
 		}else{
-			$response = array('status' => 'failed', 'message' => 'User registration failed');
+			$response = array('success' => false, 'message' => 'User registration failed');
 			sendJsonResponse($response);
 		}
+		
 	}catch(Exception $e){
-		$response = array('status' => 'failed', 'message' => $e->getMessage());
+		$response = array('success' => false, 'message' => $e->getMessage());
 		sendJsonResponse($response);
 	}
 

@@ -1,6 +1,5 @@
 // ignore_for_file: file_names
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,16 +19,30 @@ class SubmitPetScreen extends StatefulWidget {
 
 class _SubmitPetScreenState extends State<SubmitPetScreen> {
   List<String> petTypes = ['Cat', 'Dog', 'Rabbit', 'Other'];
+  List<String> petGenders = ['Male', 'Female'];
+  List<String> petHealth = ['Healthy', 'Sick', 'Injured'];
   List<String> categories = ['Adoption', 'Donation Request', 'Help/Rescue'];
   String selectedPetType = 'Cat';
   String selectedCategory = 'Adoption';
+  String selectedPetGender = 'Male';
+  String selectedPetHealth = 'Healthy';
   late double screenWidth, screenHeight;
   late Position mypostion;
   List<File> images = [];
   List<Uint8List> webImages = [];
   TextEditingController petNameController = TextEditingController();
+  TextEditingController petAgeController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController locationController = TextEditingController();
+
+  @override
+  void dispose() {
+    petNameController.dispose();
+    petAgeController.dispose();
+    descriptionController.dispose();
+    locationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +54,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
       screenWidth = screenWidth;
     }
     return Scaffold(
-      appBar: AppBar(title: Text('Submit Pet Page')),
+      appBar: AppBar(title: Text('Submit Your Pet'), centerTitle: true),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -57,6 +70,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                       child: Row(
                         // image picker containers
                         children: [
+                          //==============================================Image Picker Containers
                           for (int index = 0; index <= 2; index++)
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0),
@@ -66,12 +80,12 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                                 },
                                 child: Container(
                                   width: screenWidth * 0.7,
-                                  height: screenHeight / 3,
+                                  height: screenHeight / 3.25,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
                                       color: Colors.deepOrange,
-                                      width: 2,
+                                      width: 1.5,
                                     ),
                                     image: (images.length > index && !kIsWeb)
                                         ? DecorationImage(
@@ -95,8 +109,9 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                                               MainAxisAlignment.center,
                                           children: const [
                                             Icon(
-                                              Icons.add_a_photo,
-                                              size: 80,
+                                              Icons
+                                                  .add_photo_alternate_outlined,
+                                              size: 60,
                                               color: Colors.grey,
                                             ),
                                             SizedBox(height: 10),
@@ -117,8 +132,8 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  // pet name text field
+                  const SizedBox(height: 10),
+                  //==============================================Pet Name TextField
                   TextField(
                     controller: petNameController,
                     decoration: InputDecoration(
@@ -126,8 +141,8 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  // pet type dropdown
+                  const SizedBox(height: 10),
+                  //==============================================Pet Type Dropdown
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       labelText: 'Select Pet Type',
@@ -147,8 +162,72 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                       });
                     },
                   ),
-                  SizedBox(height: 10),
-                  // submission category dropdown
+                  const SizedBox(height: 10),
+                  //==============================================Pet Gender Dropdown
+                  Row(
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            labelText: 'Select Pet Gender',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          items: petGenders.map((String option) {
+                            return DropdownMenuItem<String>(
+                              value: option,
+                              child: Text(option),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedPetGender = newValue!;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      //==============================================Pet Age TextField
+                      Flexible(
+                        flex: 2,
+                        child: TextField(
+                          controller: petAgeController,
+                          decoration: InputDecoration(
+                            labelText: 'Pet Age (years)',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  //==============================================Pet Health Dropdown
+                  DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Select Pet Health',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    items: petHealth.map((String option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Text(option),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedPetHealth = newValue!;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  //==============================================Submission Category Dropdown
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       labelText: 'Select Submission Category',
@@ -168,9 +247,9 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                       });
                     },
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
+                  //==============================================Description TextField
                   TextField(
-                    // description text field
                     controller: descriptionController,
                     decoration: InputDecoration(
                       labelText: 'Description',
@@ -178,8 +257,8 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                     ),
                     maxLines: 3,
                   ),
-                  SizedBox(height: 10),
-                  // location text field with autofill button
+                  const SizedBox(height: 10),
+                  //==============================================Location TextField with Auto Fill Button
                   Row(
                     children: [
                       Flexible(
@@ -193,7 +272,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(55, 55),
@@ -201,7 +280,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                             borderRadius: BorderRadius.circular(10),
                             side: BorderSide(
                               color: Colors.deepOrange,
-                              width: 2,
+                              width: 1.5,
                             ),
                           ),
                         ),
@@ -215,7 +294,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                                 content: Row(
                                   children: [
                                     CircularProgressIndicator(),
-                                    SizedBox(width: 20),
+                                    const SizedBox(width: 20),
                                     Text('Fetching Location...'),
                                   ],
                                 ),
@@ -246,11 +325,11 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  // submit button
+                  const SizedBox(height: 20),
+                  //==============================================Submit Button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.deepOrange,
                       minimumSize: Size(screenWidth, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -273,11 +352,30 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
     );
   }
 
+  // show confirmation dialog before submitting pet and validating inputs
   void showSubmitDialog() {
     if (petNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Please enter pet name"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    if (petAgeController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter pet age"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    if (petAgeController.text.trim().contains(RegExp(r'[^\d]'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Pet age must be a number"),
           backgroundColor: Colors.red,
         ),
       );
@@ -316,7 +414,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Pet Submission Confirmation'),
+          title: Text('Confirm Submission'),
           content: Text('Are you sure you want to submit this pet?'),
           actions: [
             TextButton(
@@ -338,6 +436,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
     );
   }
 
+  // submit pet to server
   void submitPet() {
     List<String> base64image = [];
     if (kIsWeb) {
@@ -350,6 +449,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
       }
     }
     String petName = petNameController.text.trim();
+    int petAge = int.parse(petAgeController.text.trim());
     String description = descriptionController.text.trim();
     String lat = "0.0";
     String lng = "0.0";
@@ -357,12 +457,15 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
       lat = mypostion.latitude.toString();
       lng = mypostion.longitude.toString();
     } catch (e) {
-      // User didn't click auto-fill, ignore error
+      // if location not fetched, do nothing and use default 0.0 values
     }
     Map<String, String> body = {
       'user_id': widget.user?.userId ?? '0',
       'pet_name': petName,
       'pet_type': selectedPetType,
+      'pet_gender': selectedPetGender,
+      'pet_age': petAge.toString(),
+      'pet_health': selectedPetHealth,
       'category': selectedCategory,
       'description': description,
       'lat': lat,
@@ -379,7 +482,6 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
         )
         .then((response) {
           if (response.statusCode == 200) {
-            log("Submit Pet Log: ${response.body}");
             var resarray = jsonDecode(response.body);
             if (resarray['success'] == true) {
               if (!mounted) return;
@@ -443,7 +545,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
         webImages.add(await pickedFile.readAsBytes());
         setState(() {});
       } else {
-        images.add(File(pickedFile.path)); // only mobile
+        images.add(File(pickedFile.path)); // mobile
         setState(() {});
       }
     }
@@ -457,7 +559,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
         webImages.add(await pickedFile.readAsBytes());
         setState(() {});
       } else {
-        images.add(File(pickedFile.path)); // only mobile
+        images.add(File(pickedFile.path)); // mobile
         setState(() {});
       }
     }
@@ -467,37 +569,28 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Test if location services are enabled.
+    // Check if location services are enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
       return Future.error('Location services are disabled.');
     }
 
+    // Check for location permissions
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
         return Future.error('Location permissions are denied');
       }
     }
 
+    // Handle permission denied forever
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
       return Future.error(
         'Location permissions are permanently denied, we cannot request permissions.',
       );
     }
 
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
 }

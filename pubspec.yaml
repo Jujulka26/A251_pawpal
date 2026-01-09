@@ -14,6 +14,7 @@ dependencies:
   image_cropper: ^11.0.0
   image_picker: ^1.2.1
   shared_preferences: ^2.5.3
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
   flutter_test:
