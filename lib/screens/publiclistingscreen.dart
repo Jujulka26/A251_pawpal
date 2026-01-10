@@ -392,7 +392,11 @@ class _PublicListingScreenState extends State<PublicListingScreen> {
         } else {
           setState(() {
             petList.clear();
-            status = "No pets found";
+            if (searchQuery.isEmpty) {
+              status = "No pets available at the moment";
+            } else {
+              status = "No pets found matching your search";
+            }
           });
         }
       } else {
