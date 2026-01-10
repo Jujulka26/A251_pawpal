@@ -34,7 +34,7 @@ foreach ($data as $key => $value) {
     }
 }
  
-$signed= hash_hmac('sha256', $signing, 'bcb6ecfdbb79bc7ab734fd8ea1eb12ef52734cf7f2222e9bc4a423d310c76c2226974dad0027597417e9fc873fa4d34ef5463ae7ccd511fa23a6a5163c441e1a');
+$signed= hash_hmac('sha256', $signing, 'xSignaturehere');
 if ($signed === $data['x_signature']) {
     if ($paidstatus == "Success"){ //payment success
     
