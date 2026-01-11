@@ -10,8 +10,8 @@ $userid = $_GET['userid'];
 $petid = $_GET['petid'];
 
 
-$api_key = 'apiKeyhere';
-$collection_id = 'collectionIdhere';
+$api_key = 'yourapikey';
+$collection_id = 'yourcollectionid';
 $host = 'https://www.billplz-sandbox.com/api/v3/bills';
 
 
